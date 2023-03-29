@@ -131,6 +131,24 @@ pub mod interpreter {
         Ok(Expr::Number(difference))
     }
 
+    fn equal(args: &[Expr], _env: &mut Environment) -> Result<Expr, String> {
+        if args.len() != 2 {
+            return Err("Equality function requires exactly 2 arguments".to_string());
+        }
+    
+        let a = match args[0] {
+            Expr::Number(n) => n,
+            _ => return Err("Invalid argument type for equality function".to_string()),
+        };
+        let b = match args[1] {
+            Expr::Number(n) => n,
+            _ => return Err("Invalid argument type for equality function".to_string()),
+        };
+    
+        Ok(Expr::Symbol(if a == b { "true" } else { "false" }.to_string()))
+    }
+    
+
     fn car(args: &[Expr], _env: &mut Environment) -> Result<Expr, String> {
         if args.len() != 1 {
             return Err("Expected exactly one argument for car".to_string());
@@ -151,6 +169,40 @@ pub mod interpreter {
             Expr::List(list) => Ok(Expr::List(list[1..].to_vec())),
             _ => Err("Invalid argument type for cdr".to_string()),
         }
+    }
+
+    fn list_length(args: &[Expr], _env: &mut Environment) -> Result<Expr, String> {
+        if args.len() != 1 {
+            return Err("List length function requires exactly 1 argument".to_string());
+        }
+    
+        let list = match &args[0] {
+            Expr::List(l) => l,
+            _ => return Err("Invalid argument type for list length function".to_string()),
+        };
+    
+        Ok(Expr::Number(list.len() as f64))
+    }
+    
+    fn list_sum(args: &[Expr], _env: &mut Environment) -> Result<Expr, String> {
+        if args.len() != 1 {
+            return Err("List sum function requires exactly 1 argument".to_string());
+        }
+    
+        let list = match &args[0] {
+            Expr::List(l) => l,
+            _ => return Err("Invalid argument type for list sum function".to_string()),
+        };
+    
+        let mut sum = 0.0;
+        for item in list {
+            match item {
+                Expr::Number(n) => sum += n,
+                _ => return Err("Invalid element type for list sum function".to_string()),
+            }
+        }
+    
+        Ok(Expr::Number(sum))
     }
 
     fn define(args: &[Expr], env: &mut Environment) -> Result<Expr, String> {
@@ -186,8 +238,11 @@ pub mod interpreter {
             let mut env = Environment::default();
             env.functions.insert("+".to_string(), add);
             env.functions.insert("-".to_string(), subtract);
+            env.functions.insert("=".to_string(), equal);
             env.functions.insert("car".to_string(), car);
             env.functions.insert("cdr".to_string(), cdr);
+            env.functions.insert("list-length".to_string(), list_length);
+            env.functions.insert("list-sum".to_string(), list_sum);
             env.functions.insert("define".to_string(), define);
             env.functions.insert("print".to_string(), print);
             env
