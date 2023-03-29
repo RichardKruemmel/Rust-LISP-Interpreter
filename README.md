@@ -6,9 +6,12 @@ This project is a minimal Lisp interpreter written in Rust. It supports basic ar
 ## Features
 
 - Arithmetic operations: +, -
+- Equality comparison with the = symbol
 - Variable definition with define
 - Printing values with print
 - List manipulation with car and cdr
+- Counting elements in a list
+- Accumulating the sum of all values in a list
 
 ## Running the Interpreter
 
@@ -59,6 +62,29 @@ b
 1
 > (cdr (list 1 2 3))
 (2 3)
+```
+
+5. Equality comparison:
+
+```bash
+> (= 5 5)
+true
+> (= 5 6)
+false
+```
+
+6. Counting elements in a list:
+
+```bash
+> (list-length (1 2 3))
+3
+```
+
+7. Accumulating the sum of all values in a list:
+
+```bash
+> (list-sum ( 1 2 3))
+6
 ```
 
 ### Limitations
